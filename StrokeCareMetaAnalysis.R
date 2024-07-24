@@ -1,4 +1,4 @@
-## First we load the apropriate packages
+## First we load the appropriate packages
 library(gridExtra)
 library(meta)
 library(dmetar)
@@ -42,7 +42,7 @@ meta = metacont(n.e = n1i,
                                  title = 'Length of Hospital Stay of Stroke Patients')
 summary(meta)
 
-## The estimated overall effect size is -0.53 indicating that the for patients who administered care in specialized
+## The estimated overall effect size is -0.53 indicating that for patients who administered care in specialized
 ## stroke unit had 0.53 lower standardized mean length of stay compared to routine management. The result is not 
 ## statistical significant as well as the p-value > 0.05 and the CI include the number 0.
 ## Looking at heterogeneity measures we can see a tau^2 of 0.7887 with C.I. far away from 0. This indicates that 
@@ -74,7 +74,7 @@ meta_inf = InfluenceAnalysis(meta, random = T)
 plot(meta_inf, 'baujat')
 ## As we can see the "Orpington-Moderate" study is the only one that can be identified as influential
 
-## Lets desplay all the diagnostics
+## Lets display all the diagnostics
 plot(meta_inf, 'influence')
 ## The influential diagnostics shows that the "Orpington-Moderate is the main concern as well as its removal
 ## affects substantially the residuals, changes the pooled effect, infers lower covariance ratio, tau^2 and Q.
@@ -83,8 +83,8 @@ plot(meta_inf, 'influence')
 plot(meta_inf, 'es')
 plot(meta_inf, 'i2')
 ## Both plots shows that omitting the "Orpington-Moderate changes the effect size and reduces the heterogeneity
-## Finally both influential analysis and outliers checking shows that one study is a source of concern, however 
-## the removal of this study was not indused in significantly lower heterogeneity, and the change in overall effect size is not clinically significant
+## Finally both influential analysis and outliers checking, shows that one study is a source of concern, however 
+## the removal of this study was not induced in significantly lower heterogeneity, and the change in overall effect size is not clinically significant
 ## Thus we will carry on without removing it 
 
 ## Now its time to visualize the effect sizes via forest plot
@@ -100,11 +100,11 @@ meta::forest(meta,
 ## In the forest plot we can see the pooled effect sizes for each study and the overall effect size of the meta analysis
 ## Also we can see the effect sizes for each study through Hedges' g correction for small sample sizes along with standard error
 ## It is also displayed the standardized mean difference along with the 95% C.I as well as the weight of each study
-## Inn the bottom of the plot is displayed the method used for pooling the effects, the prediction interval and the amount of heterogeneity in the study
+## In the bottom of the plot is displayed the method used for pooling the effects, the prediction interval and the amount of heterogeneity in the study
 
 ## Overall we can say that this meta analysis shows us that patients who administered care in specialized stroke unit had 0.54 lower standardized
 ## mean length of stay compared to routine management. These result is not statistically significant as well as the C.I includes 0.
-## Despite the negative outcome that favors the specialized stroke unit, the prediction interval indicates that future studies could find both negative or 
+## Despite the negative outcome that favors the specialized stroke unit, the prediction interval indicates that future studies could find both negative and 
 ## positive outcomes 
 ## The between study heterogeneity is quite high with an I^2 = 93% and t^2 = 0.78
 
@@ -112,7 +112,7 @@ meta::forest(meta,
 ## At this point it would be a reasonably idea to contact subgroup analysis in order to search for potential reasons that causes the between study heterogeneity
 ## However subgroup analyses are purely observational, so potential effect differences may be caused by confounding variables.
 ## Additionally the number of studies in our data set is quite low (k<10) and the statistical power would be small.
-## Therefore we decide not to conduct a subgroup analysis because it would makes no sense
+## Therefore we decide not to conduct a subgroup analysis because it would makes no sense.
 
 meta :: funnel(meta,
                xlim = c(-3, 2),
@@ -133,10 +133,18 @@ legend(x = 1.6, y = 0.01,
        fill = c("gray75", "gray85", "gray95"))
 title("Contour-Enhanced Funnel Plot (Funnel plot stroke care studies)")
 
-## For the small studies, shaded funnel plot show us that only one with negative effect size is significant and one is not significant
+## For the small studies, Contour-Enhanced funnel plot show us that only one with negative effect size is significant and one is not significant
 ## For larger studies the results are both significant and not significant with the negative effect studies to appear significant.
 ## In sum, Contour-Enhanced Funnel Plot corroborates the initial findings of asymmetry that may caused from publication bias
 ## It is also possible this asymmetry to come from between study heterogeneity or simply by chance
 
 
 ## Eggers regression test
+eager_meta = meta$data %>% mutate(y = meta$TE/meta$seTE, x = 1/meta$seTE) %>%  lm(y ~ x, data = .)
+summary(eager_meta)
+
+metabias(meta, method.bias = "linreg",k.min = 9)
+## In contrast with what we observed visually, Eggers regression test shows that there is no danger for publication bias
+## The estimate of intercept is -1.75. This number is away from 0, but the p-value is 0.63. This mean that the result is not statistically significant.
+## One reason for these contradictory results is that asymmetry may come from between study heterogeneity
+## Another reason is that asymmetry may come from differences in methodology, different study procedures or simply by chance
